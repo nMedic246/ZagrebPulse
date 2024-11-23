@@ -20,6 +20,15 @@ public class EventRecord {
 	@JsonProperty("organizator")
 	private List<OrganizatorRecord> organizator;
 
+	@JsonProperty("tip") // Type field (list of IDs)
+	private List<TypeRecord> tip;
+
+	@JsonProperty("kategorija") // Category field (list of IDs)
+	private List<CategoryRecord> kategorija;
+
+	@JsonProperty("ciljanaDobnaSkupina") // Category field (list of IDs)
+	private List<AgeGroupRecord> dobnaSkupina;
+
 	public String getId() {
 		return id;
 	}
@@ -40,4 +49,27 @@ public class EventRecord {
 		this.organizator = organizator;
 	}
 
+	public List<CategoryRecord> getKategorija() {
+		return kategorija;
+	}
+
+	public void setKategorija(List<CategoryRecord> kategorija) {
+		this.kategorija = kategorija;
+	}
+
+	public List<TypeRecord> getTip() {
+		return tip;
+	}
+
+	public void setTip(List<TypeRecord> tip) {
+		this.tip = tip;
+	}
+
+	public List<AgeGroupRecord> getDobnaSkupina() {
+		return dobnaSkupina;
+	}
+
+	public void setDobnaSkupina(List<AgeGroupRecord> dobnaSkupina) {
+		this.dobnaSkupina = dobnaSkupina;
+	}
 }

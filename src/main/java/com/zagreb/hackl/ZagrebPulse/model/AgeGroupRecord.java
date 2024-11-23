@@ -1,7 +1,9 @@
 package com.zagreb.hackl.ZagrebPulse.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 
+@Data
 public class AgeGroupRecord {
     @JsonProperty("id")  // Ensures the field "id" in the JSON maps to this property
     private String id;

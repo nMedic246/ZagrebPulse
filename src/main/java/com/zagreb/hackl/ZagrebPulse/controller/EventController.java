@@ -24,7 +24,14 @@ public class EventController {
     @GetMapping("/api/events")
     public List<EventRecord> getEvents() {
         // Call the service to fetch events
-        return eventService.fetchEvents();
+        return eventService.fetchEvents(null);
+    }
+
+    @GetMapping("/api/events/zabava")
+    public List<EventRecord> getFunEvents() {
+        // Call the service to fetch events
+
+        return eventService.fetchEvents(true);
     }
 }
 

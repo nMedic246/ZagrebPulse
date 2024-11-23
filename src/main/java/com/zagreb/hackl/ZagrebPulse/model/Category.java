@@ -14,4 +14,6 @@ public class Category {
 
     @JsonProperty("Eventi") // Mapping the list of event IDs to the Java field 'eventi'
     private List<String> eventi;
+
+
 }

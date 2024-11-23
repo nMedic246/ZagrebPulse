@@ -15,21 +15,27 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Scanner;
-import java.util.Set;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class EventService {
 	
     private final OrganizatorService organizatorService;
+	private final CategoryService categoryService;
+	private final TypeService typeService;
+	private final AgeGroupService ageGroupService;
+	DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME; // Parses "2024-11-29T19:00:00.000Z"
 
-    @Autowired
-    public EventService(OrganizatorService organizatorService) {
+	@Autowired
+    public EventService(OrganizatorService organizatorService, TypeService typeService, CategoryService categoryService, AgeGroupService ageGroupService) {
         this.organizatorService = organizatorService;
-    }
+		this.categoryService = categoryService;
+		this.typeService = typeService;
+		this.ageGroupService = ageGroupService;
+	}
 
     @Value("${airtable.api.url}")
     private String API_URL;
@@ -40,21 +46,66 @@ public class EventService {
     @Value("${airtable.api.key}")
     private String API_KEY;
     
-    public List<EventRecord> fetchEvents() {
+    public List<EventRecord> fetchEvents(Boolean filterFun) {
         try {
         	List<EventRecord> events = fetchEventsRaw();
         	List<OrganizatorRecord> organizators = organizatorService.fetchOrganizatori();
-        	return events.stream().map(event -> {
+			List<CategoryRecord> categories = categoryService.fetchCategories();
+			List<TypeRecord> types = typeService.fetchTypes();
+			List<AgeGroupRecord> ageGroups = ageGroupService.fetchAgeGroups();
+
+
+			events = events.stream().map(event -> {
         		Set<String> organizatorIds = new HashSet<String>(event.getEvent().getOrganizatorRecord());
         		List<OrganizatorRecord> eventOrganizators = organizators.stream().filter(org -> organizatorIds.contains(org.getId())).collect(Collectors.toList());
         		event.setOrganizator(eventOrganizators);
+
+				Set<String> categoryIds = new HashSet<String>(event.getEvent().getKategorija());
+				List<CategoryRecord> eventCategories = categories.stream().filter(cat -> categoryIds.contains(cat.getId())).collect(Collectors.toList());
+				event.setKategorija(eventCategories);
+
+				Set<String> typeIds = new HashSet<String>(event.getEvent().getTip());
+				List<TypeRecord> eventTypes = types.stream()
+						.filter(type -> typeIds.contains(type.getId()))
+						.collect(Collectors.toList());
+				event.setTip(eventTypes);
+
+				Set<String> ageGroupIds = new HashSet<>(Optional.ofNullable(event.getEvent().getCiljaneDobneSkupine()).orElse(Collections.emptyList()));
+				List<AgeGroupRecord> eventAgeGroups = ageGroups.stream()
+						.filter(ag -> typeIds.contains(ag.getId()))
+						.collect(Collectors.toList());
+				event.setDobnaSkupina(eventAgeGroups);
+
         		return event;
-        	}).collect(Collectors.toList());
+        	}).sorted(Comparator.comparing(event -> {
+				String dateTimeString = event.getEvent().getDatumIVrijemePocetka();
+				return LocalDateTime.parse(dateTimeString, formatter); // Convert to LocalDateTime for comparison
+			})).collect(Collectors.toList());
+
+
+			if(filterFun != null && filterFun) {
+				CategoryRecord music = categories.stream().filter(cat -> cat.getCategory().getIme().equals("Glazba")).findFirst().orElse(null);
+				CategoryRecord movie = categories.stream().filter(cat -> cat.getCategory().getIme().equals("Film")).findFirst().orElse(null);
+				CategoryRecord dance = categories.stream().filter(cat -> cat.getCategory().getIme().equals("Ples")).findFirst().orElse(null);
+				AgeGroupRecord youngsters = ageGroups.stream().filter(ag -> ag.getAgeGroup().getIme().equals("mladi (16-29)")).findFirst().orElse(null);
+
+				events = events.stream().filter(e -> e.getKategorija().contains(music)
+						|| e.getKategorija().contains(movie)
+						|| e.getKategorija().contains(dance)
+						|| e.getDobnaSkupina().contains(youngsters)
+				).collect(Collectors.toList());
+			}
+			System.out.print(events.size());
+			return events;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
+
+	private boolean filterOn(Object o, Object value){
+		return o == null || o.equals(value);
+	}
 
 	private List<EventRecord> fetchEventsRaw() throws MalformedURLException, IOException, ProtocolException,
 			JsonProcessingException, JsonMappingException {

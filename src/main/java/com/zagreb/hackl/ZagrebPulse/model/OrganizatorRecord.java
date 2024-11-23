@@ -7,7 +7,6 @@ import lombok.Data;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-@AllArgsConstructor
 public class OrganizatorRecord {
     @JsonProperty("id")  // Ensures the field "id" in the JSON maps to this property
     private String id;
@@ -17,17 +16,4 @@ public class OrganizatorRecord {
 
     @JsonProperty("fields")  // Maps the nested "fields" object to the fields property
     private Organizator organizator;
-
-	public String getId() {
-		return id;
-	}
-
-	public String getCreatedTime() {
-		return createdTime;
-	}
-
-	public Organizator getOrganizator() {
-		return organizator;
-	}
-
 }
