@@ -17,4 +17,17 @@ public class OrganizatorRecord {
 
     @JsonProperty("fields")  // Maps the nested "fields" object to the fields property
     private Organizator organizator;
+
+	public String getId() {
+		return id;
+	}
+
+	public String getCreatedTime() {
+		return createdTime;
+	}
+
+	public Organizator getOrganizator() {
+		return organizator;
+	}
+
 }

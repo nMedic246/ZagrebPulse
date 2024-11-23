@@ -1,19 +1,19 @@
 package com.zagreb.hackl.ZagrebPulse.controller;
 
-import com.zagreb.hackl.ZagrebPulse.model.EventRecord;
-import com.zagreb.hackl.ZagrebPulse.service.EventService;
-import com.zagreb.hackl.ZagrebPulse.service.OrganizatorService;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import com.zagreb.hackl.ZagrebPulse.model.EventRecord;
+import com.zagreb.hackl.ZagrebPulse.service.EventService;
 
 @RestController
 public class EventController {
 
     private final EventService eventService;
+    
 
     @Autowired
     public EventController(EventService eventService) {

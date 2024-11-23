@@ -20,7 +20,8 @@ public class CacheConfig {
 
         cacheManager.registerCustomCache("categories", defaultCache());
         cacheManager.registerCustomCache("types", defaultCache());
-
+        cacheManager.registerCustomCache("types", defaultCache());
+        cacheManager.registerCustomCache("organizatori", customCache());
 
         return cacheManager;
     }
