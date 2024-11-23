@@ -1,10 +1,12 @@
 package com.zagreb.hackl.ZagrebPulse.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.zagreb.hackl.ZagrebPulse.model.OrganizatorRecord;
-import com.zagreb.hackl.ZagrebPulse.model.OrganizatorResponse;
-import org.slf4j.helpers.CheckReturnValue;
+import com.zagreb.hackl.ZagrebPulse.model.CategoryRecord;
+import com.zagreb.hackl.ZagrebPulse.model.CategoryResponse;
+import com.zagreb.hackl.ZagrebPulse.model.TypeRecord;
+import com.zagreb.hackl.ZagrebPulse.model.TypeResponse;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStreamReader;
@@ -14,22 +16,23 @@ import java.util.List;
 import java.util.Scanner;
 
 @Service
-public class OrganizatorService {
+public class TypeService {
     @Value("${airtable.api.url}")
     private String API_URL;
 
-    @Value("${airtable.organizator}")
-    private String EVENT_ORGANIZATOR_KEY;
+    @Value("${airtable.type}")
+    private String EVENT_TYPE_KEY;
 
     @Value("${airtable.api.key}")
     private String API_KEY;
 
 
 
-    public List<OrganizatorRecord> fetchOrganizatori() {
+    @Cacheable(value = "types", key = "'kljuc'")
+    public List<TypeRecord> fetchTypes() {
         try {
             // Create the URL and open a connection to the Airtable API
-            URL url = new URL(API_URL+EVENT_ORGANIZATOR_KEY);
+            URL url = new URL(API_URL+EVENT_TYPE_KEY);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
             // Set the Authorization header
@@ -48,10 +51,10 @@ public class OrganizatorService {
             // Map the response to Java objects
             ObjectMapper objectMapper = new ObjectMapper();
 
-            OrganizatorResponse organizatorResponse = objectMapper.readValue(response.toString(), OrganizatorResponse.class);
+            TypeResponse typeResponse = objectMapper.readValue(response.toString(), TypeResponse.class);
 
             // Print the records
-            return  organizatorResponse.getRecords();
+            return typeResponse.getRecords();
         } catch (Exception e) {
             e.printStackTrace();
             return null;
