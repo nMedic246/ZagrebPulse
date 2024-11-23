@@ -22,7 +22,8 @@ public class CacheConfig {
         cacheManager.registerCustomCache("types", defaultCache());
         cacheManager.registerCustomCache("types", defaultCache());
         cacheManager.registerCustomCache("organizatori", customCache());
-
+        cacheManager.registerCustomCache("ageGroups", defaultCache());
+        cacheManager.registerCustomCache("districts", defaultCache());
         return cacheManager;
     }
 
