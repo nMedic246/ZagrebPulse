@@ -2,6 +2,8 @@ package com.zagreb.hackl.ZagrebPulse.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zagreb.hackl.ZagrebPulse.model.*;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -9,15 +11,22 @@ import java.net.URL;
 import java.util.List;
 import java.util.Scanner;
 
-public class FetchDataFromAirtable {
+@Service
+public class EventService {
 
-    private static final String API_URL = "https://api.airtable.com/v0/appE6L6fQPeZ6s8Gt/tblZ6EUAeNxYXP574";
-    private static final String API_KEY = "pats9KvXvBmivlseG.4a3d9b8d286612bfab38436144cfda8ce68ac9d5603a7a7b43a3c0247802c538";
+    @Value("${airtable.api.url}")
+    private String API_URL;
 
-    public void fetchEvents() {
+    @Value("${airtable.event}")
+    private String EVENT_TABLE_KEY;
+
+    @Value("${airtable.api.key}")
+    private String API_KEY;
+
+    public List<EventRecord> fetchEvents() {
         try {
             // Create the URL and open a connection to the Airtable API
-            URL url = new URL(API_URL);
+            URL url = new URL(API_URL+EVENT_TABLE_KEY+"?include=organizator");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
             // Set the Authorization header
@@ -36,16 +45,13 @@ public class FetchDataFromAirtable {
             // Map the response to Java objects
             ObjectMapper objectMapper = new ObjectMapper();
 
-            AirtableResponse airtableResponse = objectMapper.readValue(response.toString(), AirtableResponse.class);
+            EventResponse eventResponse = objectMapper.readValue(response.toString(), EventResponse.class);
 
             // Print the records
-            List<AirtableRecord> records = airtableResponse.getRecords();
-            for (AirtableRecord record : records) {
-                System.out.println(record);
-            }
-
+            return  eventResponse.getRecords();
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
     }
 }
