@@ -22,7 +22,7 @@ public class EventService {
 
     @Value("${airtable.api.key}")
     private String API_KEY;
-
+    
     public List<EventRecord> fetchEvents() {
         try {
             // Create the URL and open a connection to the Airtable API

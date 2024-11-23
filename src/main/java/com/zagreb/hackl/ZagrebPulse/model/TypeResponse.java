@@ -10,4 +10,8 @@ import java.util.List;
 public class TypeResponse {
     private List<TypeRecord> records;
 
+	public List<TypeRecord> getRecords() {
+		return records;
+	}
+
 }

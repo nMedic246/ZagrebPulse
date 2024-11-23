@@ -9,4 +9,8 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)  // Ignore any unknown fields in the response
 public class OrganizatorResponse {
     private List<OrganizatorRecord> records;
+
+	public List<OrganizatorRecord> getRecords() {
+		return records;
+	}
 }

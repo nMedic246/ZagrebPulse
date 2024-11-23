@@ -10,4 +10,9 @@ import java.util.List;
 public class CategoryResponse {
     private List<CategoryRecord> records;
 
+	public List<CategoryRecord> getRecords() {
+		return records;
+	}
+
+    
 }

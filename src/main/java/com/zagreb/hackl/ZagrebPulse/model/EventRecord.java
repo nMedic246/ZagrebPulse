@@ -14,4 +14,8 @@ public class EventRecord {
 
     @JsonProperty("fields")  // Maps the nested "fields" object to the fields property
     private Event event;
+    
+    @JsonProperty("organizator")
+    private Organizator organizator;
+    
 }
